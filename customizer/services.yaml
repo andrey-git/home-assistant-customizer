@@ -1,0 +1,16 @@
+set_attribute:
+  description: >
+    Set or clear persistent attribute of an entity overriding any value set in code.
+    Note that calling homeassistant.reload_core_config will reset overrides to their yaml state.
+    The state machine will recognize the change only after the entity is updated.
+  fields:
+    entity_id:
+      description: Entity ID to set the attribute on.
+      example: light.patio
+    attribute:
+      description: Name of the attribute to set.
+      example: friendly_name
+    value:
+      description: (Optional) Value to set. Leave empty to clear set value.
+      example: 'My light'
+

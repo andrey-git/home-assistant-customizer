@@ -1,2 +1,4 @@
 # home-assistant-customizer
-Companion component for home-assistant CustomUI
+Custom component for [home-assistant](https://home-assistant.io)
+
+Adds customization features and optionally registers CustomUI panel.
