@@ -68,12 +68,21 @@ def async_setup(hass, config):
     def set_attribute(call):
         """Set attribute override."""
         data = call.data
-        overrides = hass.data[DATA_CUSTOMIZE].get(data[CONF_ENTITY_ID])
-        if data.get(CONF_VALUE) is None:
-            if data[CONF_ATTRIBUTE] in overrides:
-                overrides.pop(data[CONF_ATTRIBUTE])
+        entity_id = data[CONF_ENTITY_ID]
+        attribute = data[CONF_ATTRIBUTE]
+        value = data.get(CONF_VALUE)
+        overrides = hass.data[DATA_CUSTOMIZE].get(entity_id)
+        state = hass.states.get(entity_id)
+        state_attributes = dict(state.attributes)
+        if value is None:
+            if attribute in overrides:
+                overrides.pop(attribute)
+            if attribute in state_attributes:
+                state_attributes.pop(attribute)
         else:
-            overrides[data[CONF_ATTRIBUTE]] = data[CONF_VALUE]
+            overrides[attribute] = value
+            state_attributes[attribute] = value
+        hass.states.async_set(entity_id, state.state, state_attributes)
 
     hass.services.async_register(DOMAIN, SERVICE_SET_ATTRIBUTE,
                                  set_attribute,
