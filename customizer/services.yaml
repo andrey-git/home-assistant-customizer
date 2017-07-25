@@ -11,8 +11,6 @@ set_attribute:
       example: friendly_name
     value:
       description: >
-        (Optional) Value to set. Leave empty to clear set value.
+        (Optional) Value to set. Leave unspecified in order to clear set value.
         Note that when clearing attribute it will be empty (and not set-by-code) until next entity update.
-
       example: 'My light'
-
