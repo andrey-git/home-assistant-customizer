@@ -4,8 +4,7 @@ import asyncio
 import logging
 import os
 
-from homeassistant.components.frontend import (
-    register_panel, add_extra_html_url)
+import homeassistant.components.frontend as frontend
 import homeassistant.helpers.config_validation as cv
 from homeassistant.config import load_yaml_config_file, DATA_CUSTOMIZE
 from homeassistant.core import callback
@@ -55,7 +54,7 @@ CONFIG_SCHEMA = vol.Schema({
 def maybe_load_panel(hass, conf_panel):
     """Maybe load CustomUI panel. Async friendly."""
     if conf_panel is True and MINOR_VERSION <= 52:
-        register_panel(
+        frontend.register_panel(
             hass,
             "custom-ui",
             hass.config.path('panels/ha-panel-custom-ui.html'),
@@ -74,15 +73,16 @@ def async_setup(hass, config):
     maybe_load_panel(hass, config[DOMAIN].get(CONF_PANEL))
 
     if config[DOMAIN].get(CONF_CUSTOM_UI) == LOCAL:
-        if MINOR_VERSION <= 52:
-            add_extra_html_url(hass,
-                               '/local/custom_ui/state-card-custom-ui.html')
+        if MINOR_VERSION >= 53:
+            frontend.add_extra_html_url(
+                hass,
+                '/local/custom_ui/state-card-custom-ui.html')
         else:
             _LOGGER.warning('%s is only supported from Home Assistant 0.53',
                             CONF_CUSTOM_UI)
     elif config[DOMAIN].get(CONF_CUSTOM_UI) == HOSTED:
-        if MINOR_VERSION <= 52:
-            add_extra_html_url(
+        if MINOR_VERSION >= 53:
+            frontend.add_extra_html_url(
                 hass,
                 'https://raw.githubusercontent.com/andrey-git/'
                 'home-assistant-custom-ui/master/state-card-custom-ui.html')
