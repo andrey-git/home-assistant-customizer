@@ -42,7 +42,7 @@ SERVICE_SET_ATTRIBUTE_SCHEMA = vol.Schema({
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Optional(CONF_PANEL): cv.boolean,
-        vol.Optional(CONF_CUSTOM_UI): vol.In([LOCAL, HOSTED]),
+        vol.Optional(CONF_CUSTOM_UI): cv.string,
         vol.Optional(CONF_HIDE_CUSTOMUI_ATTRIBUTES, default=True): cv.boolean,
         vol.Optional(CONF_HIDE_ATTRIBUTES):
             vol.All(cv.ensure_list, [cv.string]),
@@ -72,23 +72,26 @@ def async_setup(hass, config):
     """Set up customizer."""
     maybe_load_panel(hass, config[DOMAIN].get(CONF_PANEL))
 
-    if config[DOMAIN].get(CONF_CUSTOM_UI) == LOCAL:
-        if MINOR_VERSION >= 53:
+    custom_ui = config[DOMAIN].get(CONF_CUSTOM_UI)
+    if MINOR_VERSION < 53 and custom_ui is not None:
+        _LOGGER.warning('%s is only supported from Home Assistant 0.53',
+                        CONF_CUSTOM_UI)
+    elif custom_ui is not None:
+        if custom_ui == LOCAL:
             frontend.add_extra_html_url(
                 hass,
                 '/local/custom_ui/state-card-custom-ui.html')
-        else:
-            _LOGGER.warning('%s is only supported from Home Assistant 0.53',
-                            CONF_CUSTOM_UI)
-    elif config[DOMAIN].get(CONF_CUSTOM_UI) == HOSTED:
-        if MINOR_VERSION >= 53:
+        elif custom_ui == HOSTED:
             frontend.add_extra_html_url(
                 hass,
                 'https://raw.githubusercontent.com/andrey-git/'
                 'home-assistant-custom-ui/master/state-card-custom-ui.html')
         else:
-            _LOGGER.warning('%s is only supported from Home Assistant 0.53',
-                            CONF_CUSTOM_UI)
+            frontend.add_extra_html_url(
+                hass,
+                'https://github.com/andrey-git/home-assistant-custom-ui/'
+                'releases/download/{}/state-card-custom-ui.html'
+                .format(custom_ui))
 
     component = EntityComponent(_LOGGER, DOMAIN, hass)
     if not config[DOMAIN][CONF_HIDE_CUSTOMUI_ATTRIBUTES]:

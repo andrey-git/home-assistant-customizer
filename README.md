@@ -16,7 +16,7 @@ Put `customizer` dir in `<ha_config_dir>/custom_components/`
 attribute | type           | description |
 --        | --             | -- |
 panel     | Bool (default false) | [Ignored in HA 0.53+] Whether to register [CustomUI configuration panel](https://github.com/andrey-git/home-assistant-custom-ui). |
-custom_ui [HA 0.53+]| local / hosted | Whether to fetch CustomUI files.<br>`local` loads it from `<config_dir>/www/custom_ui/state-card-custom-ui.html`.<br>`hosted` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html |
+custom_ui [HA 0.53+]| local / hosted<br>version_tag | Whether to fetch CustomUI files.<br>`local` loads it from `<config_dir>/www/custom_ui/state-card-custom-ui.html`.<br>`hosted` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html<br>version_tag (for example 20170830) loads a tagged version from 'https://github.com/andrey-git/home-assistant-custom-ui/releases/download/20170830/state-card-custom-ui.html' |
 hide_customui_attributes | Bool (default true) | [Ignored in HA 0.53+] Hide attributes used in CustomUI from more-info popups. |
 hide_attributes | List of strings | List of attributes to hide from more-info popups. (Requires CustomUI) |
 
