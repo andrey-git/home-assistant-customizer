@@ -2,9 +2,8 @@
 Custom component for [home-assistant](https://home-assistant.io)
 
 * Optionally loads CustomUI files. [HA 0.53+]
-* Optionally registers CustomUI panel.
 * Specify a list of attributes to hide from `more-info` window.
-* [HA 0.50 - 0.52] Hide CustomUI - related attributes in `more-info` window. From HA 0.53 they are hidden automatically.
+* Hide CustomUI - related attributes in `more-info` window. [HA 0.53+]
 * Add services for dynamic customization.
 
 ## Installing
@@ -15,25 +14,13 @@ Put `customizer` dir in `<ha_config_dir>/custom_components/`
 
 attribute | type           | description |
 --        | --             | -- |
-panel     | Bool (default false) | [Ignored in HA 0.53+] Whether to register [CustomUI configuration panel](https://github.com/andrey-git/home-assistant-custom-ui). |
-custom_ui [HA 0.53+]| local / hosted<br>version_tag | Whether to fetch CustomUI files.<br>`local` loads it from `<config_dir>/www/custom_ui/state-card-custom-ui.html`.<br>`hosted` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html<br>version_tag (for example 20170830) loads a tagged version from 'https://github.com/andrey-git/home-assistant-custom-ui/releases/download/20170830/state-card-custom-ui.html' |
-hide_customui_attributes | Bool (default true) | [Ignored in HA 0.53+] Hide attributes used in CustomUI from more-info popups. |
+custom_ui [HA 0.53+]| local / hosted / debug<br>version_tag | Whether to fetch CustomUI files.<br>`local` loads it from `<config_dir>/www/custom_ui/state-card-custom-ui.html`.<br>`hosted` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html<br>`debug` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui-dbg.html<br>version_tag (for example 20170830) loads a tagged version from 'https://github.com/andrey-git/home-assistant-custom-ui/releases/download/20170830/state-card-custom-ui.html' |
 hide_attributes | List of strings | List of attributes to hide from more-info popups. (Requires CustomUI) |
 
 Example HA 0.53:
 ```yaml
 customizer:
   custom_ui: local
-  hide_attributes:
-    - node_id
-    - value_index
-```
-
-Example HA 0.52:
-```yaml
-customizer:
-  panel: true
-  hide_customui_attributes: false
   hide_attributes:
     - node_id
     - value_index

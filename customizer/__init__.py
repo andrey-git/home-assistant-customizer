@@ -20,13 +20,12 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'customizer'
 DEPENDENCIES = ['frontend']
 
-CONF_PANEL = 'panel'
 CONF_CUSTOM_UI = 'custom_ui'
 
 LOCAL = 'local'
 HOSTED = 'hosted'
+DEBUG = 'debug'
 
-CONF_HIDE_CUSTOMUI_ATTRIBUTES = 'hide_customui_attributes'
 CONF_HIDE_ATTRIBUTES = 'hide_attributes'
 
 CONF_ATTRIBUTE = 'attribute'
@@ -41,37 +40,16 @@ SERVICE_SET_ATTRIBUTE_SCHEMA = vol.Schema({
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
-        vol.Optional(CONF_PANEL): cv.boolean,
         vol.Optional(CONF_CUSTOM_UI): cv.string,
-        vol.Optional(CONF_HIDE_CUSTOMUI_ATTRIBUTES, default=True): cv.boolean,
         vol.Optional(CONF_HIDE_ATTRIBUTES):
             vol.All(cv.ensure_list, [cv.string]),
     })
 }, extra=vol.ALLOW_EXTRA)
 
 
-@callback
-def maybe_load_panel(hass, conf_panel):
-    """Maybe load CustomUI panel. Async friendly."""
-    if conf_panel is True and MINOR_VERSION <= 52:
-        frontend.register_panel(
-            hass,
-            "custom-ui",
-            hass.config.path('panels/ha-panel-custom-ui.html'),
-            sidebar_title="Custom UI",
-            sidebar_icon="mdi:domain"
-        )
-    elif conf_panel is not None:
-        _LOGGER.error('%s setting is deprecated.'
-                      'Starting from HA 0.53 it is auto-added to config panel',
-                      CONF_PANEL)
-
-
 @asyncio.coroutine
 def async_setup(hass, config):
     """Set up customizer."""
-    maybe_load_panel(hass, config[DOMAIN].get(CONF_PANEL))
-
     custom_ui = config[DOMAIN].get(CONF_CUSTOM_UI)
     if MINOR_VERSION < 53 and custom_ui is not None:
         _LOGGER.warning('%s is only supported from Home Assistant 0.53',
@@ -86,6 +64,12 @@ def async_setup(hass, config):
                 hass,
                 'https://raw.githubusercontent.com/andrey-git/'
                 'home-assistant-custom-ui/master/state-card-custom-ui.html')
+        elif custom_ui == DEBUG:
+            frontend.add_extra_html_url(
+                hass,
+                'https://raw.githubusercontent.com/andrey-git/'
+                'home-assistant-custom-ui/master/'
+                'state-card-custom-ui-dbg.html')
         else:
             frontend.add_extra_html_url(
                 hass,
@@ -94,12 +78,6 @@ def async_setup(hass, config):
                 .format(custom_ui))
 
     component = EntityComponent(_LOGGER, DOMAIN, hass)
-    if not config[DOMAIN][CONF_HIDE_CUSTOMUI_ATTRIBUTES]:
-        if MINOR_VERSION >= 53:
-            _LOGGER.error(
-                '%s is deprecated. '
-                'Starting from HA 0.53 it is always treated as True',
-                CONF_HIDE_CUSTOMUI_ATTRIBUTES)
     yield from component.async_add_entity(CustomizerEntity(config[DOMAIN]))
 
     descriptions = yield from hass.async_add_job(
@@ -139,8 +117,6 @@ class CustomizerEntity(Entity):
 
     def __init__(self, config):
         """Constructor that parses the config."""
-        self.hide_customui_attributes = config.get(
-            CONF_HIDE_CUSTOMUI_ATTRIBUTES)
         self.hide_attributes = config.get(CONF_HIDE_ATTRIBUTES)
 
     @property
@@ -157,8 +133,6 @@ class CustomizerEntity(Entity):
     def state_attributes(self):
         """Return the state attributes."""
         result = {}
-        if self.hide_customui_attributes:
-            result[CONF_HIDE_CUSTOMUI_ATTRIBUTES] = True
         if self.hide_attributes:
             result[CONF_HIDE_ATTRIBUTES] = self.hide_attributes
         return result
