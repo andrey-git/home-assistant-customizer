@@ -55,26 +55,31 @@ def async_setup(hass, config):
         _LOGGER.warning('%s is only supported from Home Assistant 0.53',
                         CONF_CUSTOM_UI)
     elif custom_ui is not None:
+        def add_extra_html_url(base_url):
+            """Add extra url using version-dependent function."""
+            if MINOR_VERSION >= 59:
+                frontend.add_extra_html_url(
+                    hass, '{}.html'.format(base_url), False)
+                frontend.add_extra_html_url(
+                    hass, '{}-es5.html'.format(base_url), True)
+            else:
+                frontend.add_extra_html_url(hass, '{}.html'.format(base_url))
+
         if custom_ui == LOCAL:
-            frontend.add_extra_html_url(
-                hass,
-                '/local/custom_ui/state-card-custom-ui.html')
+            add_extra_html_url('/local/custom_ui/state-card-custom-ui')
         elif custom_ui == HOSTED:
-            frontend.add_extra_html_url(
-                hass,
+            add_extra_html_url(
                 'https://raw.githubusercontent.com/andrey-git/'
-                'home-assistant-custom-ui/master/state-card-custom-ui.html')
+                'home-assistant-custom-ui/master/state-card-custom-ui')
         elif custom_ui == DEBUG:
-            frontend.add_extra_html_url(
-                hass,
+            add_extra_html_url(
                 'https://raw.githubusercontent.com/andrey-git/'
                 'home-assistant-custom-ui/master/'
-                'state-card-custom-ui-dbg.html')
+                'state-card-custom-ui-dbg')
         else:
-            frontend.add_extra_html_url(
-                hass,
+            add_extra_html_url(
                 'https://github.com/andrey-git/home-assistant-custom-ui/'
-                'releases/download/{}/state-card-custom-ui.html'
+                'releases/download/{}/state-card-custom-ui'
                 .format(custom_ui))
 
     component = EntityComponent(_LOGGER, DOMAIN, hass)
