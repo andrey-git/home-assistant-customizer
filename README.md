@@ -42,3 +42,8 @@ name | description | example
 entity_id | Entity ID to set the attribute on | light.patio
 attribute | Name of the attribute to set | friendly_name
 value | (Optional) Value to set. Leave unspecified in order to clear set value. Note that when clearing attribute it will be empty (and not set-by-code) until next entity update | My light'
+
+For example you can call:
+```
+customizer.set_attribute({"entity_id": "light.patio", "attribute": "friendly_name", "value": "My Light"}) to change the light name
+```
