@@ -5,6 +5,7 @@ Custom component for [home-assistant](https://home-assistant.io)
 * Specify a list of attributes to hide from `more-info` window.
 * Hide CustomUI - related attributes in `more-info` window. [HA 0.53+]
 * Add services for dynamic customization.
+* Set the width and number of UI columns (Requires CustomUI 20180112+)
 
 ## Installing
 Put `customizer` dir in `<ha_config_dir>/custom_components/`
@@ -16,6 +17,7 @@ attribute | type           | description |
 --        | --             | -- |
 custom_ui [HA 0.53+]| local / hosted / debug<br>version_tag | Whether to fetch CustomUI files.<br>`local` loads it from `<config_dir>/www/custom_ui/state-card-custom-ui.html`.<br>`hosted` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui.html<br>`debug` loads it from https://raw.githubusercontent.com/andrey-git/home-assistant-custom-ui/master/state-card-custom-ui-dbg.html<br>version_tag (for example 20170830) loads a tagged version from 'https://github.com/andrey-git/home-assistant-custom-ui/releases/download/20170830/state-card-custom-ui.html' |
 hide_attributes | List of strings | List of attributes to hide from more-info popups. (Requires CustomUI) |
+columns| List of integers | Pixel widths at which to add the next column. Default value is [300, 600, 900, 1200]
 
 Example HA 0.53:
 ```yaml
@@ -24,6 +26,7 @@ customizer:
   hide_attributes:
     - node_id
     - value_index
+  columns: 350, 700, 1050, 1400, 1850, 2100
 ```
 
 ## Services
