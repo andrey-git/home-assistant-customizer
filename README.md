@@ -26,7 +26,7 @@ customizer:
   hide_attributes:
     - node_id
     - value_index
-  columns: 350, 700, 1050, 1400, 1850, 2100
+  columns: [350, 700, 1050, 1400, 1850, 2100]
 ```
 
 ## Services
